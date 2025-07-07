@@ -48,6 +48,9 @@ export default function App() {
         <p>
           It's {temp.toFixed(1)}°C in {city}
         </p>
+       <footer> 
+        <a href="https://github.com/FatimaamitaF/weatherajax"> Github </a> 
+        </footer>
       )}
     </div>
   );
