@@ -1,1 +1,94 @@
-<div id="root"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wetter App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    input {
+      padding: 8px;
+      font-size: 16px;
+    }
+    button {
+      padding: 8px 12px;
+      font-size: 16px;
+      margin-left: 8px;
+      cursor: pointer;
+    }
+    p.error {
+      color: red;
+    }
+    p.result {
+      font-size: 18px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React, ReactDOM und Axios via CDN -->
+  <script type="module">
+    import React, { useState } from "https://esm.sh/react";
+    import { createRoot } from "https://esm.sh/react-dom/client";
+    import axios from "https://esm.sh/axios";
+
+    function WeatherApp() {
+      const [inputCity, setInputCity] = useState("");
+      const [city, setCity] = useState("");
+      const [temp, setTemp] = useState(null);
+      const [error, setError] = useState(null);
+
+      const search = () => {
+        if (inputCity.trim() === "") {
+          alert("Please insert city name!");
+          return;
+        }
+        const apiKey = "96ad27349a64ea1dcdfbe6f4d458c085";
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${inputCity}&appid=${apiKey}&units=metric`;
+
+        axios.get(url)
+          .then(response => {
+            setCity(response.data.name);
+            setTemp(response.data.main.temp);
+            setError(null);
+          })
+          .catch(() => {
+            setError("City not found or API error");
+            setCity("");
+            setTemp(null);
+          });
+      };
+
+      return React.createElement(
+        "div",
+        null,
+        React.createElement("h2", null, "Weather search engine"),
+        React.createElement("input", {
+          type: "text",
+          placeholder: "city name",
+          value: inputCity,
+          onChange: (e) => setInputCity(e.target.value)
+        }),
+        React.createElement(
+          "button",
+          { onClick: search },
+          "Search"
+        ),
+        error && React.createElement("p", { className: "error" }, error),
+        temp !== null && !error &&
+          React.createElement("p", { className: "result" }, `It's ${temp.toFixed(1)}°C in ${city}`)
+      );
+    }
+
+    const root = createRoot(document.getElementById("root"));
+    root.render(React.createElement(WeatherApp));
+  </script>
+</body>
+</html>
+
